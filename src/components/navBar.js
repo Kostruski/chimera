@@ -1,23 +1,25 @@
 import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import InputBase from '@material-ui/core/InputBase';
 import { fade, makeStyles } from '@material-ui/core/styles';
-import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import Button from '@material-ui/core/Button';
+import { IconButton } from '@material-ui/core';
+import {NavigateNext, NavigateBefore } from '@material-ui/icons';
 
 
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
+    marginBottom: 50,
   },
   menuButton: {
     marginRight: theme.spacing(2),
   },
   title: {
+    textAlign: "center",
     flexGrow: 1,
     display: 'none',
     [theme.breakpoints.up('sm')]: {
@@ -54,12 +56,15 @@ const useStyles = makeStyles(theme => ({
   inputRoot: {
     color: 'inherit',
   },
+  arrow : {
+    color: "white",
+  },
   inputInput: {
     padding: theme.spacing(1, 1, 1, 7),
     transition: theme.transitions.create('width'),
     width: '100%',
     [theme.breakpoints.up('sm')]: {
-      width: 120,
+      width: 150,
       '&:focus': {
         width: 200,
       },
@@ -77,17 +82,35 @@ export default function NavBar(props) {
      <div className={classes.root}>
        <AppBar position="static">
          <Toolbar>
-           <IconButton
+           <Button
+           className={classes.search}
              edge="start"
              className={classes.menuButton}
              color="inherit"
              aria-label="open drawer"
+             onClick={props.openDrawer}
            >
-           <MenuIcon />
-           </IconButton>
+           Select ingredients
+           </Button>
            <Typography className={classes.title} variant="h6" noWrap>
-             Material-UI
+             Find your recipe
            </Typography>
+           <Toolbar>
+            <IconButton className={classes.arrow} onClick={() => props.changePage("prev")}>
+                <NavigateBefore/>
+            </IconButton>
+            <Typography className={classes.title} variant="h6" noWrap>
+                  {`page num ${props.currentPage}`}
+            </Typography>
+            <IconButton className={classes.arrow} onClick={() => props.changePage("next")}>
+                  <NavigateNext/>
+            </IconButton>
+           </Toolbar>
+
+
+
+
+
            <Button variant="contained" color="primary" className={classes.button} onClick={props.fetchData} >
              Search
            </Button>
@@ -97,7 +120,7 @@ export default function NavBar(props) {
              </div>
              <InputBase
                value={props.inputValue}
-               placeholder="Search…"
+               placeholder="type ingredients ... "
                classes={{
                  root: classes.inputRoot,
                  input: classes.inputInput,
@@ -116,14 +139,3 @@ export default function NavBar(props) {
 
 
 
-{/* <TextField
-id="inputIngredients"
-label="Search by ingredient or dish name"
-name="inputValue"
-value={props.inputValue}
-onChange={ (e) => {props.getInputValue(e)}}
-margin="normal"
-/>
-<Button variant="contained" color="primary" onClick={props.fetchData}>
-Hello World
-</Button> */}

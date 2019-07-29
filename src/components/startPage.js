@@ -1,11 +1,15 @@
 import React, { Component } from "react";
 import NavBar from "./navBar.js";
 import Modal from "./modal.js";
+import IngredientsForm from "./ingredientsForm";
 import RecipeCard from "./recipeCard.js";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { flexbox } from "@material-ui/system";
+import Drawer from "@material-ui/core/Drawer";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+
 
 const url = "/api/?";
 
@@ -15,7 +19,11 @@ export default class startPage extends Component {
     currentPage: 1,
     data: [],
     isLoading: false,
-    modalOpen: false
+    modalOpen: false,
+    openDrawer: false,
+    ingredientsChecked: [],
+    anchorEl: null,
+    lastQuery: ""
   };
 
   getInputValue = e => {
@@ -25,49 +33,145 @@ export default class startPage extends Component {
   };
 
   closeModal = () => this.setState({ modalOpen: false });
+  openDrawer = (e) => {this.setState({ openDrawer: true, anchorEl: e.currentTarget  })
+
+};
+  closeDrawer = () => this.setState({ openDrawer: false });
+  clearIngredients = () => this.setState({ingredientsChecked: []})
+
+  selectCousine = e => {
+    if (e.target.checked) {
+      const tempArr = [];
+      tempArr.push(e.target.value);
+      this.setState(prev => ({
+        ingredientsChecked: [...prev.ingredientsChecked, ...tempArr]
+      }));
+    } else {
+      const tempArr = this.state.ingredientsChecked.filter(
+        el => el !== e.target.value
+      );
+      this.setState({ ingredientsChecked: tempArr }  
+      );
+    }
+  };
 
   fetchData = e => {
     if (
       (e.key === "Enter" || e.target.className === "MuiButton-label") &
-      (this.state.inputValue !== "")
+      (this.state.inputValue !== "" || this.state.ingredientsChecked.length > 0)
     ) {
-      this.setState({ isLoading: true, modalOpen: false });
-      fetch(url + `q=${this.state.inputValue}&p=${this.state.currentPage}`)
+      this.setState({ isLoading: true, modalOpen: false,  });
+      fetch(
+        url +
+          `q=${this.state.ingredientsChecked.join(", ")}, ${
+            this.state.inputValue
+          }&p=${this.state.currentPage}`
+      )
         .then(res => res.json())
         .then(json => {
-          this.setState({ data: json.results, isLoading: false }, () => {
-            if (!json.results.length) this.setState({ modalOpen: true });
+          this.setState({ data: json.results, isLoading: false, currentPage: 1 }, () => {
+            if (!json.results.length) {this.setState({ modalOpen: true, inputValue: "" })}
+            else { this.setState({lastQuery: `q=${this.state.ingredientsChecked.join(", ")}, ${
+              this.state.inputValue
+            }&p=`, inputValue: "" }, () => console.log(this.state.lastQuery))}
           });
         })
         .catch(err => {
           console.error(err);
           this.setState({ isLoading: false });
         });
-      this.setState({ inputValue: "" });
-    }
+      }
+    this.setState({ openDrawer: false });
   };
 
+  fetchNextPage = (page) => {
+      console.log(`${this.state.lastQuery}${page}`)
+      this.setState({ isLoading: true, modalOpen: false });
+      fetch(
+        url +
+         `${this.state.lastQuery}${page}`
+      )
+        .then(res => res.json())
+        .then(json => {
+          this.setState({ data: json.results, isLoading: false }, () => {
+            if (!json.results.length) {this.setState({ modalOpen: true, inputValue: "" })}
+            else { this.setState({ inputValue: "" })}
+          });
+        })
+        .catch(err => {
+          console.error(err);
+          this.setState({ isLoading: false });
+        });
+      
+    this.setState({ openDrawer: false });
+  };
+
+
+
+  changePage = (direction) => {
+    
+    let page = this.state.currentPage
+    if(direction==="prev" & page>1 & this.state.data.length>0) {
+      page--
+      this.setState((prev) => ({ currentPage: prev.currentPage-1}))  
+      this.fetchNextPage(page)    
+    }
+    else if(direction==="next" & this.state.data.length>0){      
+      page++
+      this.setState((prev) => ({ currentPage: prev.currentPage+1}))
+      this.fetchNextPage(page)  
+    }
+
+   }
+
+
+
+
   render() {
-    if (this.state.data.length !== 0) console.log(this.state.data);
+ 
     return (
       <div>
         <NavBar
           getInputValue={this.getInputValue}
           inputValue={this.state.inputValue}
           fetchData={this.fetchData}
+          openDrawer={this.openDrawer}
+          currentPage={this.state.currentPage}
+          changePage={this.changePage}
         />
+       
+       
+          <Menu 
+          open={this.state.openDrawer}
+          anchorEl={this.state.anchorEl}
+          // onClose={this.clearIngredients} // comment this to combain serach tags from input and dropdown
+          >
+            <MenuItem>
+              <IngredientsForm
+                selectCousine={this.selectCousine}
+                fetchData={this.fetchData}
+                closeDrawer={this.closeDrawer}
+                ingredientsChecked={this.state.ingredientsChecked}
+              />
+            </MenuItem>
+          </Menu>
+         
+      
+
         {this.state.isLoading ? (
           <Box display="flex" justifyContent="center">
-            <CircularProgress color="primary" style={{ padding: "0 200px" }} />
+            <CircularProgress
+              color="primary"
+              style={{ margin: "200px", width: "100px", height: "100px" }}
+            />
           </Box>
         ) : this.state.modalOpen ? (
           <Modal
             modalOpen={this.state.modalOpen}
-            closeModal={this.closeModal}
+            closeModal={this.closeModal} 
           />
         ) : this.state.data.length ? (
           <Grid
-            container
             spacing={3}
             container
             direction="row"
@@ -77,7 +181,7 @@ export default class startPage extends Component {
             {this.state.data.map((el, i) => {
               return (
                 <Grid item key={i}>
-                  <RecipeCard recipe={el} key={i} />
+                  <RecipeCard recipe={el} />
                 </Grid>
               );
             })}
