@@ -4,12 +4,10 @@ import Modal from "./modal.js";
 import IngredientsForm from "./ingredientsForm";
 import RecipeCard from "./recipeCard.js";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import Drawer from "@material-ui/core/Drawer";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
 
 const url = "/api/?";
 
@@ -33,11 +31,11 @@ export default class startPage extends Component {
   };
 
   closeModal = () => this.setState({ modalOpen: false });
-  openDrawer = (e) => {this.setState({ openDrawer: true, anchorEl: e.currentTarget  })
-
-};
+  openDrawer = e => {
+    this.setState({ openDrawer: true, anchorEl: e.currentTarget });
+  };
   closeDrawer = () => this.setState({ openDrawer: false });
-  clearIngredients = () => this.setState({ingredientsChecked: []})
+  clearIngredients = () => this.setState({ ingredientsChecked: [] });
 
   selectCousine = e => {
     if (e.target.checked) {
@@ -50,17 +48,16 @@ export default class startPage extends Component {
       const tempArr = this.state.ingredientsChecked.filter(
         el => el !== e.target.value
       );
-      this.setState({ ingredientsChecked: tempArr }  
-      );
+      this.setState({ ingredientsChecked: tempArr });
     }
   };
 
   fetchData = e => {
     if (
-      (e.key === "Enter" || e.target.className === "MuiButton-label") &
+      (e.key === "Enter" || e.target.className === "MuiButton-label") &&
       (this.state.inputValue !== "" || this.state.ingredientsChecked.length > 0)
     ) {
-      this.setState({ isLoading: true, modalOpen: false,  });
+      this.setState({ isLoading: true, modalOpen: false });
       fetch(
         url +
           `q=${this.state.ingredientsChecked.join(", ")}, ${
@@ -69,66 +66,68 @@ export default class startPage extends Component {
       )
         .then(res => res.json())
         .then(json => {
-          this.setState({ data: json.results, isLoading: false, currentPage: 1 }, () => {
-            if (!json.results.length) {this.setState({ modalOpen: true, inputValue: "" })}
-            else { this.setState({lastQuery: `q=${this.state.ingredientsChecked.join(", ")}, ${
-              this.state.inputValue
-            }&p=`, inputValue: "" }, () => console.log(this.state.lastQuery))}
-          });
+          this.setState(
+            { data: json.results, isLoading: false, currentPage: 1 },
+            () => {
+              if (!json.results.length) {
+                this.setState({ modalOpen: true, inputValue: "" });
+              } else {
+                this.setState(
+                  {
+                    lastQuery: `q=${this.state.ingredientsChecked.join(
+                      ", "
+                    )}, ${this.state.inputValue}&p=`,
+                    inputValue: ""
+                  }
+                );
+              }
+            }
+          );
         })
         .catch(err => {
           console.error(err);
           this.setState({ isLoading: false });
         });
-      }
+    }
     this.setState({ openDrawer: false });
   };
 
-  fetchNextPage = (page) => {
-      console.log(`${this.state.lastQuery}${page}`)
-      this.setState({ isLoading: true, modalOpen: false });
-      fetch(
-        url +
-         `${this.state.lastQuery}${page}`
-      )
-        .then(res => res.json())
-        .then(json => {
-          this.setState({ data: json.results, isLoading: false }, () => {
-            if (!json.results.length) {this.setState({ modalOpen: true, inputValue: "" })}
-            else { this.setState({ inputValue: "" })}
-          });
-        })
-        .catch(err => {
-          console.error(err);
-          this.setState({ isLoading: false });
+  fetchNextPage = page => {
+    console.log(`${this.state.lastQuery}${page}`);
+    this.setState({ isLoading: true, modalOpen: false });
+    fetch(url + `${this.state.lastQuery}${page}`)
+      .then(res => res.json())
+      .then(json => {
+        this.setState({ data: json.results, isLoading: false }, () => {
+          if (!json.results.length) {
+            this.setState({ modalOpen: true, inputValue: "" });
+          } else {
+            this.setState({ inputValue: "" });
+          }
         });
-      
+      })
+      .catch(err => {
+        console.error(err);
+        this.setState({ isLoading: false });
+      });
+
     this.setState({ openDrawer: false });
   };
 
-
-
-  changePage = (direction) => {
-    
-    let page = this.state.currentPage
-    if(direction==="prev" & page>1 & this.state.data.length>0) {
-      page--
-      this.setState((prev) => ({ currentPage: prev.currentPage-1}))  
-      this.fetchNextPage(page)    
+  changePage = direction => {
+    let page = this.state.currentPage;
+    if ((direction === "prev") & (page > 1) & (this.state.data.length > 0)) {
+      page--;
+      this.setState(prev => ({ currentPage: prev.currentPage - 1 }));
+      this.fetchNextPage(page);
+    } else if ((direction === "next") & (this.state.data.length > 0)) {
+      page++;
+      this.setState(prev => ({ currentPage: prev.currentPage + 1 }));
+      this.fetchNextPage(page);
     }
-    else if(direction==="next" & this.state.data.length>0){      
-      page++
-      this.setState((prev) => ({ currentPage: prev.currentPage+1}))
-      this.fetchNextPage(page)  
-    }
-
-   }
-
-
-
+  };
 
   render() {
- 
     return (
       <div>
         <NavBar
@@ -139,24 +138,22 @@ export default class startPage extends Component {
           currentPage={this.state.currentPage}
           changePage={this.changePage}
         />
-       
-       
-          <Menu 
+
+        <Menu
           open={this.state.openDrawer}
           anchorEl={this.state.anchorEl}
           // onClose={this.clearIngredients} // comment this to combain serach tags from input and dropdown
+        >
+          <MenuItem          
           >
-            <MenuItem>
-              <IngredientsForm
-                selectCousine={this.selectCousine}
-                fetchData={this.fetchData}
-                closeDrawer={this.closeDrawer}
-                ingredientsChecked={this.state.ingredientsChecked}
-              />
-            </MenuItem>
-          </Menu>
-         
-      
+            <IngredientsForm
+              selectCousine={this.selectCousine}
+              fetchData={this.fetchData}
+              closeDrawer={this.closeDrawer}
+              ingredientsChecked={this.state.ingredientsChecked}
+             />
+          </MenuItem>
+        </Menu>
 
         {this.state.isLoading ? (
           <Box display="flex" justifyContent="center">
@@ -168,7 +165,7 @@ export default class startPage extends Component {
         ) : this.state.modalOpen ? (
           <Modal
             modalOpen={this.state.modalOpen}
-            closeModal={this.closeModal} 
+            closeModal={this.closeModal}
           />
         ) : this.state.data.length ? (
           <Grid

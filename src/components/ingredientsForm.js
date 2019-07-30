@@ -4,7 +4,6 @@ import FormControl from "@material-ui/core/FormControl";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
-import { makeStyles } from "@material-ui/core/styles";
 
 const cousine = [
   "chicken",
@@ -17,16 +16,12 @@ const cousine = [
   "cheese"
 ];
 
-const useStyles = makeStyles({
-  from : {
-    padding: 0
-  }
-})
+
 
 export default function IngredientsForm(props) {
   return (
     <ClickAwayListener onClickAway={props.closeDrawer}>
-      <div style={{ display: "flex", flexDirection: "column"}}>
+      <div style={{ display: "flex", flexDirection: "column" }}>
         <FormControl
           component="fieldset"
           style={{ margin: "30px", display: "flex", flexDirection: "column" }}

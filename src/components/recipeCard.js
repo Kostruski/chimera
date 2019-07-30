@@ -6,7 +6,7 @@ import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-
+import image from "../img/noimage.jpg"
 
 const useStyles = makeStyles({
   card: {
@@ -38,7 +38,7 @@ export default function RecipeCard(props) {
         image={
           props.recipe.thumbnail !== ""
             ? props.recipe.thumbnail
-            : "https://via.placeholder.com/300x200.jpg?text=No+image"
+            : image
         }
         title={props.recipe.title}
       />
