@@ -86,7 +86,7 @@ export default class startPage extends Component {
         })
         .catch(err => {
           console.error(err);
-          this.setState({ isLoading: false });
+          this.setState({ isLoading: false, inputValue: "" });
         });
     }
     this.setState({ openDrawer: false });
@@ -108,7 +108,7 @@ export default class startPage extends Component {
       })
       .catch(err => {
         console.error(err);
-        this.setState({ isLoading: false });
+        this.setState({ isLoading: false, inputValue: "" });
       });
 
     this.setState({ openDrawer: false });
