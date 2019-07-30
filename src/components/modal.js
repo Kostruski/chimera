@@ -25,7 +25,7 @@ export default function Modal(props) {
     <div>
       {props.modalOpen ? (
         <Dialog onClick={props.closeModal} open={true} className={classes.box}>
-          Sorry .... we didn't find any recipy, please try again with different
+          Sorry .... we didn't find any recipe, please try again with different
           search.
         </Dialog>
       ) : null}

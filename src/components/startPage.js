@@ -11,7 +11,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 
 const url = "/api/?";
 
-export default class startPage extends Component {
+export default class StartPage extends Component {
   state = {
     inputValue: "",
     currentPage: 1,
