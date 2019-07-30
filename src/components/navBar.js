@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     display: "none",
     [theme.breakpoints.up("sm")]: {
-    display: "block"
+      display: "block"
     }
   },
   search: {
@@ -73,6 +73,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function NavBar(props) {
   const classes = useStyles();
+ 
 
   return (
     <div className={classes.root}>
@@ -90,23 +91,25 @@ export default function NavBar(props) {
           <Typography className={classes.title} variant="h6" noWrap>
             Find your recipe
           </Typography>
-          <Toolbar>
-            <IconButton
-              className={classes.arrow}
-              onClick={() => props.changePage("prev")}
-            >
-              <NavigateBefore />
-            </IconButton>
-            <Typography className={classes.title} variant="h6" noWrap>
-              {`page num ${props.currentPage}`}
-            </Typography>
-            <IconButton
-              className={classes.arrow}
-              onClick={() => props.changePage("next")}
-            >
-              <NavigateNext />
-            </IconButton>
-          </Toolbar>
+          {props.data.length > 0 ? (
+            <Toolbar>
+              <IconButton
+                className={classes.arrow}
+                onClick={() => props.changePage("prev")}
+              >
+                <NavigateBefore />
+              </IconButton>
+              <Typography className={classes.title} variant="h6" noWrap>
+                {`page num ${props.currentPage}`}
+              </Typography>
+              <IconButton
+                className={classes.arrow}
+                onClick={() => props.changePage("next")}
+              >
+                <NavigateNext />
+              </IconButton>
+            </Toolbar>
+          ) : null}
 
           <Button
             variant="contained"

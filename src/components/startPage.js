@@ -137,6 +137,7 @@ export default class StartPage extends Component {
           openDrawer={this.openDrawer}
           currentPage={this.state.currentPage}
           changePage={this.changePage}
+          data={this.state.data}
         />
 
         <Menu
