@@ -11,7 +11,7 @@ import image from "../img/noimage.jpg"
 const useStyles = makeStyles({
   card: {
     width: 300,
-    height: 500,
+    height: 400,
     alignContent: "space-between",
     boxSizing: "border-box"
   },

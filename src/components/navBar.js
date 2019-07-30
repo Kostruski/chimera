@@ -8,6 +8,8 @@ import SearchIcon from "@material-ui/icons/Search";
 import Button from "@material-ui/core/Button";
 import { IconButton } from "@material-ui/core";
 import { NavigateNext, NavigateBefore } from "@material-ui/icons";
+import MenuIcon from '@material-ui/icons/Menu';
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -15,13 +17,17 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 50
   },
   menuButton: {
-    marginRight: theme.spacing(2)
+    display: "block",
+    marginRight: theme.spacing(2),
+    [theme.breakpoints.up("sm")]: {
+      display: "none"
+    }
   },
   title: {
     textAlign: "center",
     flexGrow: 1,
     display: "none",
-    [theme.breakpoints.up("sm")]: {
+    [theme.breakpoints.up("md")]: {
       display: "block"
     }
   },
@@ -40,8 +46,12 @@ const useStyles = makeStyles(theme => ({
     }
   },
   button: {
-    marginRight: "30px"
-  },
+   display: "none",
+   marginRight: theme.spacing(2),
+   [theme.breakpoints.up("sm")]: {
+     display: "block"
+   }
+    },
 
   searchIcon: {
     width: theme.spacing(7),
@@ -79,9 +89,13 @@ export default function NavBar(props) {
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
+        <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" onClick={props.openDrawer}>
+           <MenuIcon />
+         </IconButton>
+
           <Button
             edge="start"
-            className={classes.menuButton}
+            className={classes.button}
             color="inherit"
             aria-label="open drawer"
             onClick={props.openDrawer}
