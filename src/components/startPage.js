@@ -85,7 +85,7 @@ export default class StartPage extends Component {
           );
         })
         .catch(err => {
-          console.error(err);
+          alert(err);
           this.setState({ isLoading: false, inputValue: "" });
         });
     }
@@ -93,7 +93,6 @@ export default class StartPage extends Component {
   };
 
   fetchNextPage = page => {
-    console.log(`${this.state.lastQuery}${page}`);
     this.setState({ isLoading: true, modalOpen: false });
     fetch(url + `${this.state.lastQuery}${page}`)
       .then(res => res.json())
@@ -107,7 +106,7 @@ export default class StartPage extends Component {
         });
       })
       .catch(err => {
-        console.error(err);
+        alert(err);
         this.setState({ isLoading: false, inputValue: "" });
       });
 
