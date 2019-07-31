@@ -54,7 +54,7 @@ export default function RecipeCard(props) {
       <CardActions className={classes.action}>
         <Button
           size="small"
-          color="primary"
+          color="secondary"
           href={props.recipe.href}
           target="_blank"
         >
